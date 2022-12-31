@@ -31,7 +31,9 @@ const Weather = () => {
   const [location, setLocation] = useState("Himachal Pradesh");
   const [inputValue, setInputValue] = useState("");
   const [animate, setAnimate] = useState(false);
-  // const [loading, setLoading] = useState(false);
+  const [loading, setLoading] = useState(false);
+  const [errorMsg, setErrorMsg] = useState("");
+
   //   console.log(inputValue);
 
   const handleInput = (e) => {
@@ -66,23 +68,42 @@ const Weather = () => {
   };
 
   const getData = async () => {
+    setLoading(true);
+
     const { data } = await axios.get(
       `https://api.openweathermap.org/data/2.5/weather?q=${location}&units=metric&appid=${APIkey}`
     );
     // console.log(data);
 
-    setData(data);
+    // set data after 1000 ms
+    setTimeout(() => {
+      setData(data);
+      setLoading(false);
+    }, 900);
   };
 
   useEffect(() => {
     getData();
   }, [location]);
 
+  // useEffect for error message
+  // useEffect(() => {
+  //   const timer = setTimeout(() => {
+  //     setErrorMsg("");
+  //   }, 2000);
+  //   //clear timer
+  //   return () => clearTimeout(timer);
+  // }, [errorMsg]);
+
   if (!data) {
     return (
-      <div>
+      <div
+        className="w-full h-screen bg-gradient-to-r from-indigo-500 to-purple-500
+      flex flex-col items-center justify-center text-white"
+      >
         <div>
-          <ImSpinner10 className="text-4xl animate-spin" />
+          Loading...
+          <ImSpinner10 className="text-4xl animate-spin text-5xl" />
         </div>
       </div>
     );
@@ -105,19 +126,19 @@ const Weather = () => {
       break;
 
     case "Rain":
-      icon = <IoMdRainy />;
+      icon = <IoMdRainy className="text-[#31cafb]" />;
       break;
 
     case "Clear":
-      icon = <IoMdSunny />;
+      icon = <IoMdSunny className="text-[#ffde33]" />;
       break;
 
     case "Drizzle":
-      icon = <BsCloudDrizzleFill />;
+      icon = <BsCloudDrizzleFill className="text-[#31cafb]" />;
       break;
 
     case "Snow":
-      icon = <IoMdSnow />;
+      icon = <IoMdSnow className="text-[#31cafb]" />;
       break;
 
     case "Thunderstorm":
@@ -140,8 +161,9 @@ const Weather = () => {
   return (
     <div
       className="w-full h-screen bg-gradient-to-r from-indigo-500 to-purple-500
-    flex flex-col items-center justify-center px-5 lg:px-4"
+    flex flex-col items-center justify-center px-5 lg:px-4 pt-9"
     >
+      {/* {errorMsg && <div> {`${errorMsg.response.data}`} </div>} */}
       {/* form */}
       <form
         className={`${
@@ -169,7 +191,7 @@ const Weather = () => {
           />
           <button
             onClick={(e) => handleSubmit(e)}
-            className="bg-[#1ab8ed]  hover:bg-[#15abdd]
+            className="bg-[#CD7CEA] hover:bg-[#4365DA]
             h-full 
             w-20 
             rounded-full
@@ -183,88 +205,94 @@ const Weather = () => {
       </form>
       {/* card */}
       <div
-        className="w-full max-w-[455px] bg-black/20 max-h-[555px] text-white
+        className="w-full max-w-[455px] min-h-[545px] bg-black/20 text-white
       back-drop-blur-[32px] rounded-[32px] py-3 px-6"
       >
-        <div>
-          {/* cardtop */}
-          <div className="flex items-center gap-x-5 ">
-            {/* icon */}
-            <div className="text-[87px]">{icon}</div>
-            <div>
-              {/* counrty name */}
-              <div className="text-2xl font-semibold">
-                {data.name}, {data.sys.country}
-              </div>
-              {/* date */}
+        {loading ? (
+          <div className="w-full h-full flex justify-center items-center">
+            <ImSpinner10 className="animate-spin text-white text-4xl" />
+          </div>
+        ) : (
+          <div>
+            {/* cardtop */}
+            <div className="flex items-center gap-x-5 ">
+              {/* icon */}
+              <div className="text-[87px]">{icon}</div>
               <div>
-                {date.getUTCDate()}/{date.getUTCMonth() + 1}/
-                {date.getUTCFullYear()}
+                {/* counrty name */}
+                <div className="text-2xl font-semibold">
+                  {data.name}, {data.sys.country}
+                </div>
+                {/* date */}
+                <div>
+                  {date.getUTCDate()}/{date.getUTCMonth() + 1}/
+                  {date.getUTCFullYear()}
+                </div>
               </div>
             </div>
-          </div>
 
-          {/* card body */}
-          <div className="my-20 text-[144px]">
-            {/* temp */}
-            <div
-              className="leading-none 
+            {/* card body */}
+            <div className="my-20 text-[144px]">
+              {/* temp */}
+              <div
+                className="leading-none 
             font-light 
             flex justify-center
             items-center"
-            >
-              <div>{parseInt(data.main.temp)}</div>
-              <div className="text-4xl">
-                <TbTemperatureCelsius />
-              </div>
-            </div>
-            <div className="text-2xl capitalize text-center">
-              {data.weather[0].description}
-            </div>
-          </div>
-
-          {/* card bottom */}
-          <div className="max-w-[378px] mx-auto flex flex-col gap-y-6">
-            <div className="flex justify-between">
-              <div className="flex items-center gap-x-2 ">
-                <div>
-                  <BsEye />
-                </div>
-                Visibility <span>{data.visibility / 1000}</span> km
-              </div>
-              <div className="flex items-center gap-x-2 ">
-                <div>
-                  <BsThermometer />
-                </div>
-                Feels Like{" "}
-                <div className="flex items-center">
-                  {parseInt(data.main.feels_like)}
+              >
+                <div>{parseInt(data.main.temp)}</div>
+                <div className="text-4xl">
                   <TbTemperatureCelsius />
                 </div>
               </div>
-            </div>
-            <div className="flex justify-between">
-              <div className="flex items-center gap-x-2 ">
-                <div>
-                  <BsWater />
-                </div>
-                Humidity <span>{data.main.humidity} %</span>
+              <div className="text-2xl capitalize text-center">
+                {data.weather[0].description}
               </div>
-              <div className="flex items-center gap-x-2 ">
-                <div>
-                  <BsWind />
+            </div>
+
+            {/* card bottom */}
+            <div className="max-w-[378px] mx-auto flex flex-col gap-y-6">
+              <div className="flex justify-between">
+                <div className="flex items-center gap-x-2 ">
+                  <div>
+                    <BsEye />
+                  </div>
+                  Visibility <span>{data.visibility / 1000}</span> km
                 </div>
-                <div>
-                  Wind{" "}
-                  <span className="ml-2">
-                    {" "}
-                    {parseInt(data.wind.speed)} m/s{" "}
-                  </span>
+                <div className="flex items-center gap-x-2 ">
+                  <div>
+                    <BsThermometer />
+                  </div>
+                  Feels Like{" "}
+                  <div className="flex items-center">
+                    {parseInt(data.main.feels_like)}
+                    <TbTemperatureCelsius />
+                  </div>
+                </div>
+              </div>
+              <div className="flex justify-between">
+                <div className="flex items-center gap-x-2 ">
+                  <div>
+                    <BsWater />
+                  </div>
+                  Humidity <span>{data.main.humidity} %</span>
+                </div>
+                <div className="flex items-center gap-x-2 ">
+                  <div>
+                    <BsWind />
+                  </div>
+                  <div>
+                    Wind{" "}
+                    <span className="ml-2">
+                      {" "}
+                      {parseInt(data.wind.speed)} m/s{" "}
+                    </span>
+                  </div>
                 </div>
               </div>
             </div>
           </div>
-        </div>
+        )}
       </div>
       <div className="flex justify-between gap-x-6 pt-6">
         {/* Sign */}
