@@ -18,6 +18,7 @@ import {
   BsWater,
 } from "react-icons/bs";
 
+import { MdCopyright } from "react-icons/md";
 import { TbTemperatureCelsius } from "react-icons/tb";
 import { ImSpinner10 } from "react-icons/im";
 
@@ -139,7 +140,7 @@ const Weather = () => {
   return (
     <div
       className="w-full h-screen bg-gradient-to-r from-indigo-500 to-purple-500
-    flex flex-col items-center justify-center px-4 lg:px-0"
+    flex flex-col items-center justify-center px-5 lg:px-4"
     >
       {/* form */}
       <form
@@ -182,8 +183,8 @@ const Weather = () => {
       </form>
       {/* card */}
       <div
-        className="w-full max-w-[455px] bg-black/20 min-h-[585px] text-white
-      back-drop-blur-[32px] rounded-[32px] py-12 px-6"
+        className="w-full max-w-[455px] bg-black/20 max-h-[555px] text-white
+      back-drop-blur-[32px] rounded-[32px] py-3 px-6"
       >
         <div>
           {/* cardtop */}
@@ -197,7 +198,7 @@ const Weather = () => {
               </div>
               {/* date */}
               <div>
-                {date.getUTCDate() + 1}/{date.getUTCMonth() + 1}/
+                {date.getUTCDate()}/{date.getUTCMonth() + 1}/
                 {date.getUTCFullYear()}
               </div>
             </div>
@@ -263,6 +264,19 @@ const Weather = () => {
               </div>
             </div>
           </div>
+        </div>
+      </div>
+      <div className="flex justify-between gap-x-6 pt-6">
+        {/* Sign */}
+        <div className="text-white font-light">
+          <div>Made With ❤️ By Manu</div>
+        </div>
+        <div className="flex text-white font-light items-center gap-x-1">
+          <div>
+            {" "}
+            <MdCopyright />
+          </div>
+          <div className="text-[15px]">all rights reserved 2023</div>
         </div>
       </div>
     </div>
