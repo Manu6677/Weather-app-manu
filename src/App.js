@@ -1,7 +1,15 @@
-import React from 'react';
+import React from "react";
+import Weather from "./Weather";
+import { BrowserRouter, Route, Routes } from "react-router-dom";
 
 const App = () => {
-  return <div>react app</div>;
+  return (
+    <BrowserRouter>
+      <Routes>
+        <Route path="/" element={<Weather />} />
+      </Routes>
+    </BrowserRouter>
+  );
 };
 
 export default App;
